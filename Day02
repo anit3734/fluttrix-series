@@ -1,0 +1,64 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: AnimatedContainerDemo(),
+    );
+  }
+}
+
+class AnimatedContainerDemo extends StatefulWidget {
+  @override
+  _AnimatedContainerDemoState createState() => _AnimatedContainerDemoState();
+}
+
+class _AnimatedContainerDemoState extends State<AnimatedContainerDemo> {
+  bool isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Fluttrix – Day 2: AnimatedContainer'),
+        centerTitle: true,
+        backgroundColor: Colors.blueAccent,
+      ),
+      body: Center(
+        child: GestureDetector(
+          onTap: () {
+            setState(() {
+              isExpanded = !isExpanded;
+            });
+          },
+          child: AnimatedContainer(
+            duration: Duration(seconds: 1),
+            curve: Curves.fastOutSlowIn,
+            height: isExpanded ? 300 : 150,
+            width: isExpanded ? 300 : 150,
+            decoration: BoxDecoration(
+              color: isExpanded ? Colors.blue : Colors.amber,
+              borderRadius: BorderRadius.circular(isExpanded ? 30 : 10),
+            ),
+            child: Center(
+              child: Text(
+                'Tap Me!',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
