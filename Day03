@@ -1,0 +1,229 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: SimpleNavBar(),
+    );
+  }
+}
+
+class SimpleNavBar extends StatefulWidget {
+  @override
+  _SimpleNavBarState createState() => _SimpleNavBarState();
+}
+
+class _SimpleNavBarState extends State<SimpleNavBar> {
+  int selectedIndex = 0; // Default active tab is "Home"
+
+  // List to store the names of the sections.
+  final List<String> sections = ['Home', 'Search', 'Notification', 'Profile'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Navigation Example"),
+      ),
+      body: Row(
+        children: [
+          // Show NavigationRail for larger screens
+          if (MediaQuery.of(context).size.width >= 600)
+            NavigationRail(
+              selectedIndex: selectedIndex,
+              onDestinationSelected: (index) {
+                setState(() {
+                  selectedIndex = index;
+                });
+              },
+              labelType: NavigationRailLabelType.all,
+              destinations: [
+                NavigationRailDestination(
+                  icon: Icon(Icons.home),
+                  label: Text('Home'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.search),
+                  label: Text('Search'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.notifications_none),
+                  label: Text('Notification'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.person),
+                  label: Text('Profile'),
+                ),
+              ],
+            ),
+          // Show main content
+          Expanded(
+            child: Center(
+              child: Text(
+                "Selected: ${sections[selectedIndex]}",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      ),
+      // Drawer for mobile
+      drawer: MediaQuery.of(context).size.width < 600
+          ? Drawer(
+        child: ListView(
+          children: [
+            ListTile(
+              title: Text('Home'),
+              onTap: () {
+                setState(() {
+                  selectedIndex = 0;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('Search'),
+              onTap: () {
+                setState(() {
+                  selectedIndex = 1;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('Notification'),
+              onTap: () {
+                setState(() {
+                  selectedIndex = 2;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('Profile'),
+              onTap: () {
+                setState(() {
+                  selectedIndex = 3;
+                });
+              },
+            ),
+          ],
+        ),
+      )
+          : null,
+      // BottomNavigationBar for mobile screens
+      bottomNavigationBar: MediaQuery.of(context).size.width < 600
+          ? CustomNavBar(
+        selectedIndex: selectedIndex,
+        onTabSelected: (index) {
+          setState(() {
+            selectedIndex = index;
+          });
+        },
+      )
+          : null,
+    );
+  }
+}
+
+class CustomNavBar extends StatelessWidget {
+  final int selectedIndex;
+  final Function(int) onTabSelected;
+
+  const CustomNavBar({
+    required this.selectedIndex,
+    required this.onTabSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 70,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 8,
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          NavItem(
+            icon: Icons.home,
+            label: "Home",
+            isSelected: selectedIndex == 0,
+            onTap: () => onTabSelected(0),
+          ),
+          NavItem(
+            icon: Icons.search,
+            label: "Search",
+            isSelected: selectedIndex == 1,
+            onTap: () => onTabSelected(1),
+          ),
+          NavItem(
+            icon: Icons.notifications_none,
+            label: "Notification",
+            isSelected: selectedIndex == 2,
+            onTap: () => onTabSelected(2),
+          ),
+          NavItem(
+            icon: Icons.person,
+            label: "Profile",
+            isSelected: selectedIndex == 3,
+            onTap: () => onTabSelected(3),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class NavItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const NavItem({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            margin: EdgeInsets.only(bottom: isSelected ? 8 : 0),
+            child: Icon(
+              icon,
+              size: isSelected ? 30 : 24,
+              color: isSelected ? Colors.purple : Colors.grey,
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: isSelected ? Colors.purple : Colors.grey,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
