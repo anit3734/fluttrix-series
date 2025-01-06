@@ -1,0 +1,141 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+// Define a simple model class for the app state
+class Counter with ChangeNotifier {
+  int _counter = 0;
+
+  int get counter => _counter;
+
+  void increment() {
+    _counter++;
+    notifyListeners(); // Notify listeners to rebuild UI
+  }
+
+  void decrement() {
+    _counter--;
+    notifyListeners(); // Notify listeners to rebuild UI
+  }
+}
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => Counter(),
+      child: MaterialApp(
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          textTheme: TextTheme(
+            headlineMedium: TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
+            bodyMedium: TextStyle(fontSize: 18, color: Colors.white),
+          ),
+        ),
+        home: HomeScreen(),
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var counter = Provider.of<Counter>(context);
+
+    return Scaffold(
+      backgroundColor: Colors.blueAccent, // Gradient background
+      body: SafeArea(
+        child: Center(
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blue.shade300, Colors.purple.shade300],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Flutter State Management',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.white),
+                ),
+                SizedBox(height: 20),
+                // Displaying the current count with a large font size
+                Text(
+                  'Current Count: ${counter.counter}',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 48),
+                ),
+                SizedBox(height: 40),
+                // Custom Increment Button with animation
+                AnimatedButton(
+                  label: 'Increment',
+                  onPressed: counter.increment,
+                  color: Colors.greenAccent,
+                ),
+                SizedBox(height: 20),
+                // Custom Decrement Button with animation
+                AnimatedButton(
+                  label: 'Decrement',
+                  onPressed: counter.decrement,
+                  color: Colors.redAccent,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Custom Animated Button widget
+class AnimatedButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onPressed;
+  final Color color;
+
+  AnimatedButton({required this.label, required this.onPressed, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(50),
+      splashColor: color.withOpacity(0.3),
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(50),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.4),
+              spreadRadius: 2,
+              blurRadius: 5,
+            ),
+          ],
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+}
