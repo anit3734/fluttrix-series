@@ -1,0 +1,99 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Flutterix - SliverAppBar Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const SliverAppBarExample(),
+    );
+  }
+}
+
+class SliverAppBarExample extends StatelessWidget {
+  const SliverAppBarExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 300.0,
+            pinned: true,
+            floating: false,
+            flexibleSpace: FlexibleSpaceBar(
+              title: const Text(
+                '',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    'assets/Flutterix Logo.png',  // Add your image to assets folder
+                    fit: BoxFit.cover,
+                  ),
+                  Container(
+                    color: Colors.black.withOpacity(0.4),  // Dark overlay
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: const Icon(Icons.more_vert),
+                onPressed: () {},
+              ),
+            ],
+          ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+                  (context, index) => Card(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.blueAccent,
+                    child: Text(
+                      '${index + 1}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  title: Text('Item ${index + 1}'),
+                  subtitle: const Text('Description goes here'),
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                ),
+              ),
+              childCount: 15,  // Adjust item count
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('FAB Clicked!')),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
